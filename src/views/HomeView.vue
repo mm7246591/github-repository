@@ -4,23 +4,17 @@ import Header from "../components/Header.vue";
 
 <template>
   <el-container>
-    <Header />
+    <el-header> <Header /></el-header>
     <el-container>
-      <div>
-        <el-aside width="200px">Aside</el-aside>
-        <el-main>Main</el-main>
-      </div>
+      <el-aside width="200px">Aside</el-aside>
+      <el-main>Main</el-main>
     </el-container>
   </el-container>
 </template>
 
 <style scoped>
-.el-container {
-  display: flex;
-  flex-direction: column;
-}
-div {
-  display: flex;
+.el-header {
+  padding: 0;
 }
 .el-aside {
   height: 100vh;
