@@ -1,15 +1,36 @@
 <script setup>
 import { RouterLink } from "vue-router";
-import { onMounted } from "@vue/runtime-core";
+import { onMounted, ref, computed } from "@vue/runtime-core";
 import { useUserStore } from "../stores/user";
+import { Search } from "@element-plus/icons-vue";
 import Header from "../components/Header.vue";
-// const props = defineProps({
-//   name: String,
-// });
+import ColorLanguage from "../components/ColorLanguage.vue";
 const user = useUserStore();
+const page = ref(1);
+const pageSize = ref(7);
 onMounted(async () => {
   await user.getRepos();
 });
+const displayRepo = computed(() => {
+  if (user.input) {
+    handleSizeChange();
+    return user.sortReops.filter((repo) =>
+      repo.name.toLowerCase().includes(user.input)
+    );
+  } else {
+    pageSize.value = 7;
+  }
+  return user.sortReops.slice(
+    pageSize.value * page.value - pageSize.value,
+    pageSize.value * page.value
+  );
+});
+const handleSizeChange = (val) => {
+  pageSize.value = val;
+};
+const handleCurrentChange = (val) => {
+  page.value = val;
+};
 </script>
 <template>
   <el-container>
@@ -19,29 +40,55 @@ onMounted(async () => {
         <el-image :src="user.avatar" />
         <div class="name">{{ user.name }}</div>
         <div class="userName">{{ user.userName }}</div>
+        <div class="location">
+          <svg
+            class="icon"
+            viewBox="0 0 16 16"
+            version="1.1"
+            width="16"
+            height="16"
+          >
+            <path
+              fill-rule="evenodd"
+              d="M11.536 3.464a5 5 0 010 7.072L8 14.07l-3.536-3.535a5 5 0 117.072-7.072v.001zm1.06 8.132a6.5 6.5 0 10-9.192 0l3.535 3.536a1.5 1.5 0 002.122 0l3.535-3.536zM8 9a2 2 0 100-4 2 2 0 000 4z"
+            ></path>
+          </svg>
+          {{ user.location }}
+        </div>
       </div>
       <div class="repos">
-        <div class="repo" v-for="repo of user.sortReops" :key="repo.id">
+        <el-input
+          v-model.trim="user.input"
+          placeholder="Find a repository"
+          :prefix-icon="Search"
+        />
+        <div class="repo" v-for="repo of displayRepo" :key="repo.node_id">
           <div class="text">
-            <RouterLink :to="{ path: '/' }">
+            <RouterLink :to="{ path: `/${user.userName}/${repo.name}` }">
               <span>{{ repo.name }}</span></RouterLink
             >
             <span>{{ repo.visibility }}</span>
           </div>
+          <span class="description" v-if="repo.description">{{
+            repo.description
+          }}</span>
           <div class="intro">
-            <span class="HtmlColor" v-if="repo.language === 'HTML'"></span>
-            <span class="CssColor" v-else-if="repo.language === 'CSS'"></span>
-            <span
-              class="JsColor"
-              v-else-if="repo.language === 'JavaScript'"
-            ></span>
-            <span
-              class="TsColor"
-              v-else-if="repo.language === 'TypeScript'"
-            ></span>
-            <span class="VueColor" v-else-if="repo.language === 'Vue'"></span>
-            <span class="JavaColor" v-else-if="repo.language === 'Java'"></span>
-            <span v-if="repo.language">{{ repo.language }}</span>
+            <ColorLanguage :language="repo.language" />
+            <span class="count" v-if="repo.forks_count"
+              ><svg
+                width="16"
+                height="16"
+                viewBox="0 0 16 16"
+                version="1.1"
+                class="icon"
+              >
+                <path
+                  fill-rule="evenodd"
+                  d="M5 3.25a.75.75 0 11-1.5 0 .75.75 0 011.5 0zm0 2.122a2.25 2.25 0 10-1.5 0v.878A2.25 2.25 0 005.75 8.5h1.5v2.128a2.251 2.251 0 101.5 0V8.5h1.5a2.25 2.25 0 002.25-2.25v-.878a2.25 2.25 0 10-1.5 0v.878a.75.75 0 01-.75.75h-4.5A.75.75 0 015 6.25v-.878zm3.75 7.378a.75.75 0 11-1.5 0 .75.75 0 011.5 0zm3-8.75a.75.75 0 100-1.5.75.75 0 000 1.5z"
+                ></path>
+              </svg>
+              {{ repo.forks_count }}</span
+            >
             <span class="time" v-if="repo.time.day > 30"
               >Updated on {{ repo.time.date }} {{ repo.time.month }}
               {{ repo.time.year }}</span
@@ -53,8 +100,15 @@ onMounted(async () => {
               >Updated {{ repo.time.hour }} hours ago</span
             >
           </div>
-          <div></div>
         </div>
+        <el-pagination
+          :page-size="pageSize"
+          :total="user.sortReops.length"
+          layout="prev, pager, next"
+          @size-change="handleSizeChange"
+          @current-change="handleCurrentChange"
+        >
+        </el-pagination>
       </div>
     </el-main>
   </el-container>
@@ -74,6 +128,9 @@ onMounted(async () => {
   justify-content: center;
   margin: auto;
   background-color: #0d1117;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial,
+    sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
+  font-weight: 500;
 }
 .user {
   display: flex;
@@ -83,6 +140,7 @@ onMounted(async () => {
 .user .name {
   font-size: 24px;
   line-height: 1.25;
+  color: #c1c1c1;
 }
 .user .userName {
   font-size: 20px;
@@ -90,6 +148,7 @@ onMounted(async () => {
   font-weight: 300;
   line-height: 24px;
   color: #8b949e;
+  margin: 10px 0;
 }
 .user .el-image {
   width: 300px;
@@ -103,9 +162,17 @@ onMounted(async () => {
   flex-direction: column;
   margin: 0 50px;
 }
+.el-input {
+  width: 300px;
+  margin-bottom: 10px;
+  --el-fill-color-blank: #0d1117;
+  --el-text-color-regular: #8b949e;
+  --el-border-color: #30363d;
+  --el-font-size-base: 14px;
+}
 .repo {
   width: 100%;
-  height: 300px;
+  height: 120px;
   display: flex;
   flex-direction: column;
   border-top: 1px solid #30363d;
@@ -123,6 +190,12 @@ onMounted(async () => {
 }
 .repo .text a:hover {
   text-decoration: underline;
+}
+.description {
+  height: 50px;
+  color: #8b949e;
+  margin: 10px 0;
+  font-size: 16px;
 }
 .repo .text span {
   margin-right: 10px;
@@ -145,65 +218,21 @@ onMounted(async () => {
   font-size: 16px;
   position: relative;
 }
-.repo .intro span {
-  margin: 0 10px;
+.intro .count {
+  width: 25px;
+  height: 20px;
+  margin-right: 10px;
 }
-.repo .intro .time {
-  margin: 0;
+.icon {
+  fill: currentColor;
 }
-
-.HtmlColor {
-  position: absolute;
-  top: 3px;
-  left: -15px;
-  width: 10px;
-  height: 10px;
-  background-color: #e34c26;
-  border-radius: 50%;
+.intro .time {
+  margin-left: 0;
 }
-.CssColor {
-  position: absolute;
-  top: 3px;
-  left: -15px;
-  width: 10px;
-  height: 10px;
-  background-color: #563d7c;
-  border-radius: 50%;
-}
-.JsColor {
-  position: absolute;
-  top: 3px;
-  left: -15px;
-  width: 10px;
-  height: 10px;
-  background-color: #f1e05a;
-  border-radius: 50%;
-}
-.TsColor {
-  position: absolute;
-  top: 3px;
-  left: -15px;
-  width: 10px;
-  height: 10px;
-  background-color: #2b7489;
-  border-radius: 50%;
-}
-.VueColor {
-  position: absolute;
-  top: 3px;
-  left: -15px;
-  width: 10px;
-  height: 10px;
-  background-color: #41b883;
-  border-radius: 50%;
-}
-.JavaColor {
-  position: absolute;
-  top: 3px;
-  left: -15px;
-  width: 10px;
-  height: 10px;
-  background-color: #b07219;
-  border-radius: 50%;
+.el-pagination {
+  margin: auto;
+  --el-text-color-primary: white;
+  --el-fill-color-blank: #0d1117;
+  --el-pagination-font-size: 16px;
 }
 </style>

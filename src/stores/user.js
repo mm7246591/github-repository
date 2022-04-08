@@ -7,18 +7,17 @@ export const useUserStore = defineStore({
         avatar: "",
         name: "",
         userName: "",
+        location: "",
+        input: "",
         repos: [],
-        pushed_at: [],
     }),
     getters: {
         sortReops(state) {
-            for (let i of state.repos) {
-                return i.sort((a, b) => {
-                    const newTime = new Date(a.pushed_at);
-                    const lastTime = new Date(b.pushed_at);
-                    return lastTime.getTime() - newTime.getTime();
-                });
-            }
+            return state.repos.sort((a, b) => {
+                const newTime = new Date(a.pushed_at);
+                const lastTime = new Date(b.pushed_at);
+                return lastTime.getTime() - newTime.getTime();
+            });
         },
     },
     actions: {
@@ -27,14 +26,14 @@ export const useUserStore = defineStore({
                 this.avatar = res.data.avatar_url;
                 this.name = res.data.name;
                 this.userName = res.data.login;
+                this.location = res.data.location;
             });
         },
         async getRepos() {
             await axios(`https://api.github.com/users/mm7246591/repos`).then(
                 (res) => {
-                    this.repos.push(res.data);
+                    // timeEvent
                     const now = new Date();
-                    console.log(this.repos);
                     for (let i of res.data) {
                         const time = new Date(i.pushed_at);
                         const year = time.getFullYear();
@@ -49,6 +48,7 @@ export const useUserStore = defineStore({
                             day: days,
                             hour: hours,
                         };
+                        this.repos.push(i);
                     }
                 }
             );

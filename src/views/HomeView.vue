@@ -6,7 +6,7 @@ import Header from "../components/Header.vue";
   <el-container>
     <el-header> <Header /></el-header>
     <el-container>
-      <el-aside width="200px">Aside</el-aside>
+      <el-aside width="200px">123</el-aside>
       <el-main>Main</el-main>
     </el-container>
   </el-container>

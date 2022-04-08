@@ -1,9 +1,9 @@
 <script setup>
 import { RouterLink } from "vue-router";
-import { Search } from "@element-plus/icons-vue";
 import { onMounted } from "@vue/runtime-core";
 import { useSearchStore } from "../stores/index";
 import { useUserStore } from "../stores/user";
+import { Search } from "@element-plus/icons-vue";
 const search = useSearchStore();
 const user = useUserStore();
 const vFoucs = {
@@ -17,7 +17,6 @@ onMounted(async () => {
 </script>
 <template>
   <el-menu
-    class="el-menu-demo"
     mode="horizontal"
     background-color="#010409"
     active-text-color="#010409"
@@ -43,7 +42,7 @@ onMounted(async () => {
         v-foucs
       />
     </el-menu-item>
-    <el-menu-item index="2" class="icon"
+    <el-menu-item index="2" class="avatar"
       ><RouterLink
         :to="{
           path: `/${user.userName}`,
@@ -63,9 +62,8 @@ onMounted(async () => {
   --el-menu-border-color: #010409;
   --el-menu-hover-text-color: white;
 }
-
 .el-header .el-input {
-  width: 500px;
+  width: 400px;
   padding: 0 10px;
   background-color: #161b22;
   --el-input-bg-color: #161b22;
@@ -77,7 +75,7 @@ onMounted(async () => {
   fill: currentColor;
   margin: 10px 0;
 }
-.el-menu--horizontal > .el-menu-item.icon {
+.el-menu--horizontal > .el-menu-item.avatar {
   line-height: 40px;
 }
 </style>
