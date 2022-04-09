@@ -103,7 +103,7 @@ const handleCurrentChange = (val) => {
         </div>
         <el-pagination
           :page-size="pageSize"
-          :total="user.sortReops.length"
+          :total="10"
           layout="prev, pager, next"
           @size-change="handleSizeChange"
           @current-change="handleCurrentChange"

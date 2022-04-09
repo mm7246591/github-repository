@@ -4,6 +4,7 @@ import { onMounted } from "@vue/runtime-core";
 import { useSearchStore } from "../stores/index";
 import { useUserStore } from "../stores/user";
 import { Search } from "@element-plus/icons-vue";
+import axios from "axios";
 const search = useSearchStore();
 const user = useUserStore();
 const vFoucs = {
@@ -14,6 +15,15 @@ const vFoucs = {
 onMounted(async () => {
   await user.getUser();
 });
+const searchEvent = () => {
+  if (search.input) {
+    axios("https://api.github.com/users/" + search.input).then((res) => {
+      search.users.push(res.data);
+    });
+  } else {
+    search.users = [];
+  }
+};
 </script>
 <template>
   <el-menu
@@ -36,6 +46,7 @@ onMounted(async () => {
           /></svg></RouterLink
       ><el-input
         v-model.trim="search.input"
+        @input="searchEvent"
         placeholder="Searching"
         :prefix-icon="Search"
         size="large"

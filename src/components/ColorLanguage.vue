@@ -12,7 +12,7 @@ axios.get("/static/colors.json").then((res) => {
 });
 </script>
 <template>
-  <span v-for="color of colors" :key="color">
+  <span v-for="color of colors" :key="color[1]">
     <span
       class="colorLanguage"
       :style="{

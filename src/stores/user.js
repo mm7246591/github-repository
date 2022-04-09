@@ -33,6 +33,7 @@ export const useUserStore = defineStore({
             await axios(`https://api.github.com/users/mm7246591/repos`).then(
                 (res) => {
                     // timeEvent
+                    this.repos = [];
                     const now = new Date();
                     for (let i of res.data) {
                         const time = new Date(i.pushed_at);
