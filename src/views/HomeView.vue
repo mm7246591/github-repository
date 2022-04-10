@@ -1,9 +1,16 @@
 <script setup>
-import Header from "../components/Header.vue";
 import { useSearchStore } from "../stores/index";
+import { useUserStore } from "../stores/user";
+import { onMounted } from "@vue/runtime-core";
+import { RouterLink } from "vue-router";
+import { Search } from "@element-plus/icons-vue";
+import Header from "../components/Header.vue";
 
 const search = useSearchStore();
-
+const user = useUserStore();
+onMounted(async () => {
+  await user.getRepos();
+});
 console.log(search.users);
 </script>
 
@@ -11,17 +18,44 @@ console.log(search.users);
   <el-container>
     <el-header> <Header /></el-header>
     <el-container>
-      <el-aside width="200px">123</el-aside>
+      <el-aside>
+        <span>Recent Repositories</span>
+        <div class="search">
+          <el-input
+            v-model.trim="user.input"
+            placeholder="Searching"
+            :prefix-icon="Search"
+            @input="user.filterRecent"
+          />
+        </div>
+        <div class="recentRepos">
+          <div
+            class="recentRepo"
+            v-for="repo of user.filterRecent"
+            :key="repo.node_id"
+          >
+            <div class="recentAvatar">
+              <el-avatar :size="20" :src="user.avatar" />
+            </div>
+            <div class="recentName">
+              <RouterLink :to="{ path: `/${repo.full_name}` }">{{
+                repo.full_name
+              }}</RouterLink>
+            </div>
+          </div>
+        </div>
+      </el-aside>
       <el-main>
         <div class="user" v-for="user of search.users" :key="user.node_id">
           <div class="avatar">
             <el-image :src="user.avatar_url" />
           </div>
           <div class="text">
+            <div class="userName">{{ user.login }}</div>
             <div class="name">{{ user.name }}</div>
-            <div class="userName">{{ user.username }}</div>
           </div>
         </div>
+
         <!-- <div class="user">
           <div class="avatar">
             <el-avatar />
@@ -49,43 +83,91 @@ console.log(search.users);
 .el-header {
   padding: 0;
 }
-.el-aside {
+.el-container {
   height: 100vh;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial,
+    sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
+  font-weight: 500;
+  line-height: 1.2;
+}
+.el-aside {
+  width: 350px;
+  height: auto;
+  padding: 20px;
   color: white;
   background-color: #0d1117;
+}
+.el-aside .search {
+  margin: 20px 0 5px 0;
+}
+.search .el-input {
+  width: 100%;
+  margin-bottom: 10px;
+  --el-fill-color-blank: #0d1117;
+  --el-text-color-regular: #8b949e;
+  --el-border-color: #30363d;
+  --el-font-size-base: 14px;
+}
+.el-aside .recentRepos {
+  display: flex;
+  flex-direction: column;
+  border-bottom: 1px solid #30363d;
+}
+.recentRepos .recentRepo {
+  height: 20px;
+  display: flex;
+  align-items: center;
+  margin: 5px 0;
+}
+.recentRepo .recentAvatar {
+  margin-right: 5px;
+}
+.recentRepo .recentName:hover {
+  text-decoration: underline;
+}
+.recentName a {
+  text-decoration: none;
+  color: #c9d1d9;
 }
 .el-main {
   width: 100%;
   height: auto;
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-  grid-template-rows: 150px;
+  grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
+  grid-template-rows: 160px;
   gap: 10px;
   color: white;
   background-color: #010409;
 }
 .user {
-  width: 350px;
-  height: 150px;
-  margin: 10px 0;
+  width: 358px;
+  height: 158px;
   display: flex;
-  transition: 0.3s ease-in-out;
+  justify-content: center;
+  align-items: center;
+  border: 1px solid #30363d;
+  padding: 10px;
 }
 .avatar .el-image {
   width: 150px;
   height: 150px;
   border-radius: 50%;
 }
+.text {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
 .text .name {
   font-size: 24px;
-  line-height: 1.25;
+  text-align: center;
   color: #c1c1c1;
 }
 .text .userName {
   font-size: 20px;
-  font-style: normal;
-  font-weight: 300;
-  line-height: 24px;
+  text-align: center;
   color: #8b949e;
   margin: 10px 0;
 }

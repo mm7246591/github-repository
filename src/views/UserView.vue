@@ -64,7 +64,7 @@ const handleCurrentChange = (val) => {
         />
         <div class="repo" v-for="repo of displayRepo" :key="repo.node_id">
           <div class="text">
-            <RouterLink :to="{ path: `/${user.userName}/${repo.name}` }">
+            <RouterLink :to="{ path: `/${repo.full_name}` }">
               <span>{{ repo.name }}</span></RouterLink
             >
             <span>{{ repo.visibility }}</span>
@@ -131,6 +131,7 @@ const handleCurrentChange = (val) => {
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial,
     sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
   font-weight: 500;
+  line-height: 1.2;
 }
 .user {
   display: flex;

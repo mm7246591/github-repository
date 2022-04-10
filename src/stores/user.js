@@ -10,6 +10,7 @@ export const useUserStore = defineStore({
         location: "",
         input: "",
         repos: [],
+        recentRepo: [],
     }),
     getters: {
         sortReops(state) {
@@ -17,6 +18,16 @@ export const useUserStore = defineStore({
                 const newTime = new Date(a.pushed_at);
                 const lastTime = new Date(b.pushed_at);
                 return lastTime.getTime() - newTime.getTime();
+            });
+        },
+        filterRecent(state) {
+            if (state.input) {
+                return state.repos.filter((repo) => {
+                    return repo.full_name.toLowerCase().includes(state.input);
+                });
+            }
+            return state.repos.filter((repo) => {
+                return repo.time.day <= 30;
             });
         },
     },

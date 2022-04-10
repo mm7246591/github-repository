@@ -7,18 +7,15 @@ import { Search } from "@element-plus/icons-vue";
 import axios from "axios";
 const search = useSearchStore();
 const user = useUserStore();
-const vFoucs = {
-  mounted(el) {
-    el.focus();
-  },
-};
 onMounted(async () => {
   await user.getUser();
 });
 const searchEvent = () => {
   if (search.input) {
     axios("https://api.github.com/users/" + search.input).then((res) => {
-      search.users.push(res.data);
+      if (res.data) {
+        search.users.push(res.data);
+      }
     });
   } else {
     search.users = [];
@@ -50,7 +47,6 @@ const searchEvent = () => {
         placeholder="Searching"
         :prefix-icon="Search"
         size="large"
-        v-foucs
       />
     </el-menu-item>
     <el-menu-item index="2" class="avatar"
@@ -79,7 +75,7 @@ const searchEvent = () => {
   background-color: #161b22;
   --el-input-bg-color: #161b22;
   --el-input-text-color: white;
-  --el-text-color-placeholder: white;
+  --el-text-color-placeholder: #c9d1d9;
 }
 .logo {
   color: white;
