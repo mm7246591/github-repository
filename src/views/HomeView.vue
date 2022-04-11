@@ -1,5 +1,5 @@
 <script setup>
-import { useSearchStore } from "../stores/index";
+import { useSearchStore } from "../stores/search";
 import { useUserStore } from "../stores/user";
 import { onMounted } from "@vue/runtime-core";
 import { RouterLink } from "vue-router";
@@ -46,34 +46,20 @@ console.log(search.users);
         </div>
       </el-aside>
       <el-main>
-        <div class="user" v-for="user of search.users" :key="user.node_id">
+        <RouterLink
+          class="user"
+          v-for="user of search.users"
+          :key="user.node_id"
+          :to="{ path: `/user/${user.login}` }"
+        >
           <div class="avatar">
             <el-image :src="user.avatar_url" />
           </div>
           <div class="text">
-            <div class="userName">{{ user.login }}</div>
+            <div class="userName">{{ user.username }}</div>
             <div class="name">{{ user.name }}</div>
           </div>
-        </div>
-
-        <!-- <div class="user">
-          <div class="avatar">
-            <el-avatar />
-          </div>
-          <div class="text">
-            <div class="name">123</div>
-            <div class="userName">123</div>
-          </div>
-        </div>
-        <div class="user">
-          <div class="avatar">
-            <el-avatar />
-          </div>
-          <div class="text">
-            <div class="name">123</div>
-            <div class="userName">123</div>
-          </div>
-        </div> -->
+        </RouterLink>
       </el-main>
     </el-container>
   </el-container>
@@ -133,11 +119,11 @@ console.log(search.users);
   width: 100%;
   height: auto;
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
-  grid-template-rows: 160px;
+  grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
   gap: 10px;
   color: white;
   background-color: #010409;
+  text-decoration: none;
 }
 .user {
   width: 358px;
@@ -146,7 +132,11 @@ console.log(search.users);
   justify-content: center;
   align-items: center;
   border: 1px solid #30363d;
+  -webkit-box-shadow: 0 0 15px white;
+  -moz-box-shadow: 0 0 15px white;
+  box-shadow: 0 0 15px white;
   padding: 10px;
+  text-decoration: none;
 }
 .avatar .el-image {
   width: 150px;

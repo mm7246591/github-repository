@@ -1,62 +1,23 @@
 <script setup>
-import axios from "axios";
 import { RouterLink } from "vue-router";
 import { onMounted } from "@vue/runtime-core";
-import { useSearchStore } from "../stores/search";
+import { useUserStore } from "../stores/user";
 import { Search } from "@element-plus/icons-vue";
 import Header from "../components/Header.vue";
 import ColorLanguage from "../components/ColorLanguage.vue";
-const props = defineProps({
-  username: String,
-});
-const search = useSearchStore();
+const user = useUserStore();
 onMounted(async () => {
-  await getUser();
-  await getRepos();
+  await user.getRepos();
 });
-const getUser = async () => {
-  await axios(`https://api.github.com/users/${props.username}`).then((res) => {
-    search.avatar = res.data.avatar_url;
-    search.name = res.data.name;
-    search.username = res.data.login;
-    search.location = res.data.location;
-  });
-};
-const getRepos = async () => {
-  await axios(`https://api.github.com/users/${props.username}/repos`).then(
-    (res) => {
-      console.log(res.data);
-      // timeEvent
-      search.repos = [];
-      const now = new Date();
-      for (let i of res.data) {
-        const time = new Date(i.pushed_at);
-        const year = time.getFullYear();
-        const month = time.getMonth();
-        const date = time.getDate();
-        const days = parseInt(Math.abs(time - now) / 1000 / 60 / 60 / 24);
-        const hours = parseInt(Math.abs(time - now) / 1000 / 60 / 60);
-        i.time = {
-          year: year,
-          mongth: month,
-          date: date,
-          day: days,
-          hour: hours,
-        };
-        search.repos.push(i);
-      }
-    }
-  );
-};
 </script>
 <template>
   <el-container>
     <el-header><Header /></el-header>
     <el-main>
       <div class="user">
-        <el-image :src="search.avatar" />
-        <div class="name">{{ search.name }}</div>
-        <div class="userName">{{ search.username }}</div>
+        <el-image :src="user.avatar" />
+        <div class="name">{{ user.name }}</div>
+        <div class="userName">{{ user.username }}</div>
         <div class="location">
           <svg
             class="icon"
@@ -70,16 +31,16 @@ const getRepos = async () => {
               d="M11.536 3.464a5 5 0 010 7.072L8 14.07l-3.536-3.535a5 5 0 117.072-7.072v.001zm1.06 8.132a6.5 6.5 0 10-9.192 0l3.535 3.536a1.5 1.5 0 002.122 0l3.535-3.536zM8 9a2 2 0 100-4 2 2 0 000 4z"
             ></path>
           </svg>
-          {{ search.location }}
+          {{ user.location }}
         </div>
       </div>
       <div class="repos">
         <el-input
-          v-model.trim="search.repoSearch"
+          v-model.trim="user.input"
           placeholder="Find a repository"
           :prefix-icon="Search"
         />
-        <div class="repo" v-for="repo of search.sortReops" :key="repo.node_id">
+        <div class="repo" v-for="repo of user.sortReops" :key="repo.node_id">
           <div class="text">
             <RouterLink :to="{ path: `/${repo.full_name}` }">
               <span>{{ repo.name }}</span></RouterLink
@@ -122,7 +83,6 @@ const getRepos = async () => {
     </el-main>
   </el-container>
 </template>
-
 <style scoped>
 .el-container {
   height: 100vh;

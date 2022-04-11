@@ -6,11 +6,10 @@ export const useUserStore = defineStore({
     state: () => ({
         avatar: "",
         name: "",
-        userName: "",
+        username: "",
         location: "",
         input: "",
         repos: [],
-        recentRepo: [],
     }),
     getters: {
         sortReops(state) {
@@ -36,12 +35,12 @@ export const useUserStore = defineStore({
             await axios("https://api.github.com/users/mm7246591").then((res) => {
                 this.avatar = res.data.avatar_url;
                 this.name = res.data.name;
-                this.userName = res.data.login;
+                this.username = res.data.login;
                 this.location = res.data.location;
             });
         },
         async getRepos() {
-            await axios(`https://api.github.com/users/mm7246591/repos`).then(
+            await axios("https://api.github.com/users/mm7246591/repos").then(
                 (res) => {
                     // timeEvent
                     this.repos = [];

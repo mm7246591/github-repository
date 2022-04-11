@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory } from "vue-router";
 import HomeView from "../views/HomeView.vue";
+import PresonalView from "../views/PersonalView.vue";
 import UserView from "../views/UserView.vue";
 import RepoView from "../views/RepoView.vue";
 
@@ -12,7 +13,12 @@ const router = createRouter({
             component: HomeView,
         },
         {
-            path: "/:name",
+            path: "/:username",
+            name: "PresonalView",
+            component: PresonalView,
+        },
+        {
+            path: "/user/:username",
             name: "UserView",
             component: UserView,
             props: true,
