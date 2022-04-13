@@ -50,7 +50,7 @@ console.log(search.users);
           class="user"
           v-for="user of search.users"
           :key="user.node_id"
-          :to="{ path: `/user/${user.login}` }"
+          :to="{ path: `/users/${user.login}/repos` }"
         >
           <div class="avatar">
             <el-image :src="user.avatar_url" />

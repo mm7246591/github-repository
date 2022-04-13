@@ -1,7 +1,7 @@
 <script setup>
 import axios from "axios";
 import { RouterLink } from "vue-router";
-import { onMounted } from "@vue/runtime-core";
+import { onMounted, ref, computed } from "@vue/runtime-core";
 import { useSearchStore } from "../stores/search";
 import { Search } from "@element-plus/icons-vue";
 import Header from "../components/Header.vue";
@@ -10,10 +10,32 @@ const props = defineProps({
   username: String,
 });
 const search = useSearchStore();
+const num = ref(10);
+const bottomOfWindow = ref(null);
+const isMax = ref(false);
 onMounted(async () => {
+  search.userSearch = "";
+  search.users = [];
   await getUser();
   await getRepos();
 });
+const scrollEvent = () => {
+  bottomOfWindow.value = Math.floor(
+    document.documentElement.offsetHeight -
+      document.documentElement.scrollTop -
+      window.innerHeight <=
+      0
+  );
+  if (bottomOfWindow.value && isMax.value === false) {
+    loadMore();
+  }
+};
+const loadMore = () => {
+  num.value += 10;
+  getRepos();
+};
+
+window.addEventListener("scroll", scrollEvent);
 const getUser = async () => {
   await axios(`https://api.github.com/users/${props.username}`).then((res) => {
     search.avatar = res.data.avatar_url;
@@ -23,31 +45,42 @@ const getUser = async () => {
   });
 };
 const getRepos = async () => {
-  await axios(`https://api.github.com/users/${props.username}/repos`).then(
-    (res) => {
-      console.log(res.data);
-      // timeEvent
-      search.repos = [];
-      const now = new Date();
-      for (let i of res.data) {
-        const time = new Date(i.pushed_at);
-        const year = time.getFullYear();
-        const month = time.getMonth();
-        const date = time.getDate();
-        const days = parseInt(Math.abs(time - now) / 1000 / 60 / 60 / 24);
-        const hours = parseInt(Math.abs(time - now) / 1000 / 60 / 60);
-        i.time = {
-          year: year,
-          mongth: month,
-          date: date,
-          day: days,
-          hour: hours,
-        };
-        search.repos.push(i);
-      }
+  await axios(
+    `https://api.github.com/users/${props.username}/repos?page=1&per_page=${num.value}`
+  ).then((res) => {
+    if (res.data.length < num.value) {
+      isMax.value = true;
     }
-  );
+    // timeEvent
+    search.repos = [];
+    const now = new Date();
+    for (let i of res.data) {
+      const time = new Date(i.pushed_at);
+      const year = time.getFullYear();
+      const month = time.getMonth();
+      const date = time.getDate();
+      const days = parseInt(Math.abs(time - now) / 1000 / 60 / 60 / 24);
+      const hours = parseInt(Math.abs(time - now) / 1000 / 60 / 60);
+      i.time = {
+        year: year,
+        mongth: month,
+        date: date,
+        day: days,
+        hour: hours,
+      };
+      search.repos.push(i);
+    }
+  });
 };
+const filterRepo = computed(() => {
+  if (search.repoSearch) {
+    isMax.value = false;
+    return search.sortReops.filter((repo) =>
+      repo.name.toLowerCase().includes(search.repoSearch)
+    );
+  }
+  return search.sortReops;
+});
 </script>
 <template>
   <el-container>
@@ -73,13 +106,13 @@ const getRepos = async () => {
           {{ search.location }}
         </div>
       </div>
-      <div class="repos">
+      <div class="repos" @scroll="scrollEvent">
         <el-input
           v-model.trim="search.repoSearch"
           placeholder="Find a repository"
           :prefix-icon="Search"
         />
-        <div class="repo" v-for="repo of search.sortReops" :key="repo.node_id">
+        <div class="repo" v-for="repo of filterRepo" :key="repo.node_id">
           <div class="text">
             <RouterLink :to="{ path: `/${repo.full_name}` }">
               <span>{{ repo.name }}</span></RouterLink
@@ -118,6 +151,9 @@ const getRepos = async () => {
             >
           </div>
         </div>
+        <span class="noData" v-if="isMax && search.repos.length > 10"
+          >Sorry No more Repositories.....</span
+        >
       </div>
     </el-main>
   </el-container>
@@ -125,7 +161,7 @@ const getRepos = async () => {
 
 <style scoped>
 .el-container {
-  height: 100vh;
+  /* height: 100vh; */
   display: flex;
   flex-direction: column;
 }
@@ -142,8 +178,10 @@ const getRepos = async () => {
     sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
   font-weight: 500;
   line-height: 1.2;
+  /* overflow: hidden; */
 }
 .user {
+  height: 100vh;
   display: flex;
   flex-direction: column;
   color: white;
@@ -245,5 +283,10 @@ const getRepos = async () => {
   --el-text-color-primary: white;
   --el-fill-color-blank: #0d1117;
   --el-pagination-font-size: 16px;
+}
+.repos .noData {
+  color: #8b949e;
+  font-size: 36px;
+  text-align: center;
 }
 </style>

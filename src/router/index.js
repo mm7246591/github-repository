@@ -18,13 +18,13 @@ const router = createRouter({
             component: PresonalView,
         },
         {
-            path: "/user/:username",
+            path: "/users/:username/repos",
             name: "UserView",
             component: UserView,
             props: true,
         },
         {
-            path: "/:name/:repoName",
+            path: "/:username/:repo",
             name: "RepoView",
             component: RepoView,
             props: true,

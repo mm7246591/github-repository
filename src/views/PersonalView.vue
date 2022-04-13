@@ -1,6 +1,6 @@
 <script setup>
 import { RouterLink } from "vue-router";
-import { onMounted } from "@vue/runtime-core";
+import { onMounted, computed } from "@vue/runtime-core";
 import { useUserStore } from "../stores/user";
 import { Search } from "@element-plus/icons-vue";
 import Header from "../components/Header.vue";
@@ -9,6 +9,31 @@ const user = useUserStore();
 onMounted(async () => {
   await user.getRepos();
 });
+const filterRepo = computed(() => {
+  if (user.input) {
+    user.isMax = false;
+    return user.sortReops.filter((repo) =>
+      repo.name.toLowerCase().includes(user.input)
+    );
+  }
+  return user.sortReops;
+});
+const scrollEvent = () => {
+  user.bottomOfWindow = Math.floor(
+    document.documentElement.offsetHeight -
+      document.documentElement.scrollTop -
+      window.innerHeight <=
+      0
+  );
+  if (user.bottomOfWindow && user.isMax === false) {
+    loadMore();
+  }
+};
+const loadMore = () => {
+  user.num += 10;
+  user.getRepos();
+};
+window.addEventListener("scroll", scrollEvent);
 </script>
 <template>
   <el-container>
@@ -34,13 +59,13 @@ onMounted(async () => {
           {{ user.location }}
         </div>
       </div>
-      <div class="repos">
+      <div class="repos" @scroll="scrollEvent">
         <el-input
           v-model.trim="user.input"
           placeholder="Find a repository"
           :prefix-icon="Search"
         />
-        <div class="repo" v-for="repo of user.sortReops" :key="repo.node_id">
+        <div class="repo" v-for="repo of filterRepo" :key="repo.node_id">
           <div class="text">
             <RouterLink :to="{ path: `/${repo.full_name}` }">
               <span>{{ repo.name }}</span></RouterLink
@@ -79,13 +104,16 @@ onMounted(async () => {
             >
           </div>
         </div>
+        <span class="noData" v-if="user.isMax && user.repos.length > 10"
+          >Sorry No more Repositories.....</span
+        >
       </div>
     </el-main>
   </el-container>
 </template>
 <style scoped>
 .el-container {
-  height: 100vh;
+  /* height: 100vh; */
   display: flex;
   flex-direction: column;
 }
@@ -102,8 +130,10 @@ onMounted(async () => {
     sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
   font-weight: 500;
   line-height: 1.2;
+  overflow: hidden;
 }
 .user {
+  height: 100vh;
   display: flex;
   flex-direction: column;
   color: white;
@@ -205,5 +235,10 @@ onMounted(async () => {
   --el-text-color-primary: white;
   --el-fill-color-blank: #0d1117;
   --el-pagination-font-size: 16px;
+}
+.repos .noData {
+  color: #8b949e;
+  font-size: 36px;
+  text-align: center;
 }
 </style>

@@ -10,6 +10,9 @@ export const useUserStore = defineStore({
         location: "",
         input: "",
         repos: [],
+        num: 10,
+        bottomOfWindow: null,
+        isMax: false,
     }),
     getters: {
         sortReops(state) {
@@ -40,29 +43,29 @@ export const useUserStore = defineStore({
             });
         },
         async getRepos() {
-            await axios("https://api.github.com/users/mm7246591/repos").then(
-                (res) => {
-                    // timeEvent
-                    this.repos = [];
-                    const now = new Date();
-                    for (let i of res.data) {
-                        const time = new Date(i.pushed_at);
-                        const year = time.getFullYear();
-                        const month = time.getMonth();
-                        const date = time.getDate();
-                        const days = parseInt(Math.abs(time - now) / 1000 / 60 / 60 / 24);
-                        const hours = parseInt(Math.abs(time - now) / 1000 / 60 / 60);
-                        i.time = {
-                            year: year,
-                            mongth: month,
-                            date: date,
-                            day: days,
-                            hour: hours,
-                        };
-                        this.repos.push(i);
-                    }
+            await axios(
+                `https://api.github.com/users/mm7246591/repos?page=1&per_page=${this.num}`
+            ).then((res) => {
+                // timeEvent
+                this.repos = [];
+                const now = new Date();
+                for (let i of res.data) {
+                    const time = new Date(i.pushed_at);
+                    const year = time.getFullYear();
+                    const month = time.getMonth();
+                    const date = time.getDate();
+                    const days = parseInt(Math.abs(time - now) / 1000 / 60 / 60 / 24);
+                    const hours = parseInt(Math.abs(time - now) / 1000 / 60 / 60);
+                    i.time = {
+                        year: year,
+                        mongth: month,
+                        date: date,
+                        day: days,
+                        hour: hours,
+                    };
+                    this.repos.push(i);
                 }
-            );
+            });
         },
     },
 });
