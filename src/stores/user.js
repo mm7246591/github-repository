@@ -52,7 +52,7 @@ export const useUserStore = defineStore({
                 for (let i of res.data) {
                     const time = new Date(i.pushed_at);
                     const year = time.getFullYear();
-                    const month = time.getMonth();
+                    const month = time.getMonth() + 1;
                     const date = time.getDate();
                     const days = parseInt(Math.abs(time - now) / 1000 / 60 / 60 / 24);
                     const hours = parseInt(Math.abs(time - now) / 1000 / 60 / 60);
