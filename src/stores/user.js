@@ -24,11 +24,11 @@ export const useUserStore = defineStore({
         },
         filterRecent(state) {
             if (state.input) {
-                return state.repos.filter((repo) => {
+                return state.sortReops.filter((repo) => {
                     return repo.full_name.toLowerCase().includes(state.input);
                 });
             }
-            return state.repos.filter((repo) => {
+            return state.sortReops.filter((repo) => {
                 return repo.time.day <= 30;
             });
         },
