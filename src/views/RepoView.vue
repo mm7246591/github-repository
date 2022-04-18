@@ -35,7 +35,6 @@ const contributors = ref(
 );
 const forksCount = ref(null);
 const forkUser = ref([]);
-console.log(props.username, props.repo);
 onMounted(async () => {
   await getRepo();
   await getLanguages();
@@ -49,7 +48,6 @@ const getRepo = async () => {
   ).then((res) => {
     description.value = res.data.description;
     forksCount.value = res.data.forks_count;
-    console.log(res.data);
   });
 };
 const getLanguages = async () => {
@@ -176,7 +174,6 @@ const getContributors = async () => {
     `https://api.github.com/repos/${props.username}/${props.repo}/forks`
   ).then((res) => {
     forkUser.value = res.data;
-    console.log(forkUser.value);
   });
 };
 </script>
