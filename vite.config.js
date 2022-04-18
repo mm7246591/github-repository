@@ -1,38 +1,14 @@
-import { fileURLToPath, URL } from "url";
-
 import { defineConfig } from "vite";
-import vue from "@vitejs/plugin-vue";
-
-// https://vitejs.dev/config/
+import vue from "@vitejs / plugin - vue";
 export default defineConfig({
+    undefined,
     plugins: [vue()],
+    server: {
+        undefined,
+        host: "0.0 .0 .0",
+        port: 3000,
+        // 是否开启 https
+        https: false,
+    },
     base: "./",
-    configureWebpack: {
-        resolve: {
-            alias: {
-                "@": fileURLToPath(new URL("./src",
-                    import.meta.url)),
-                assets: "@/assets",
-                common: "@/common",
-                components: "@/components",
-                network: "@/network",
-                views: "@/views",
-                plugins: "@/plugins",
-            },
-        },
-    },
-    css: {
-        postcss: {
-            plugins: [{
-                postcssPlugin: "internal:charset-removal",
-                AtRule: {
-                    charset: (atRule) => {
-                        if (atRule.name === "charset") {
-                            atRule.remove();
-                        }
-                    },
-                },
-            }, ],
-        },
-    },
 });
