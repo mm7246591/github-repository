@@ -68,6 +68,7 @@ console.log(search.users);
 <style scoped>
 .el-header {
   padding: 0;
+  height: auto;
 }
 .el-container {
   height: 100vh;
@@ -160,5 +161,16 @@ console.log(search.users);
   text-align: center;
   color: #8b949e;
   margin: 10px 0;
+}
+@media screen and (max-width: 768px) {
+  .el-container {
+    flex-direction: column;
+  }
+  .el-aside {
+    width: 100%;
+  }
+  .el-main {
+    justify-items: center;
+  }
 }
 </style>

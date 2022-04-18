@@ -279,6 +279,7 @@ const getContributors = async () => {
 }
 .el-header {
   padding: 0;
+  height: auto;
 }
 .el-main {
   width: 100%;
@@ -294,7 +295,7 @@ const getContributors = async () => {
 }
 .title {
   text-align: center;
-  width: 800px;
+  width: 60%;
   margin: 0 20px;
 }
 .title a {
@@ -315,7 +316,7 @@ const getContributors = async () => {
   margin-top: 30px;
 }
 .about {
-  width: 500px;
+  width: 40%;
   display: flex;
   flex-direction: column;
   margin: 0 20px;
@@ -388,5 +389,19 @@ const getContributors = async () => {
 }
 .chart {
   margin-top: 20px;
+}
+@media screen and (max-width: 768px) {
+  .el-main {
+    height: 100%;
+    flex-direction: column;
+  }
+  .title {
+    width: 100%;
+    margin: 0;
+  }
+  .about {
+    width: 100%;
+    margin: 0;
+  }
 }
 </style>

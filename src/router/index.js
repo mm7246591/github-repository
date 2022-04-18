@@ -29,6 +29,10 @@ const router = createRouter({
             component: RepoView,
             props: true,
         },
+        {
+            path: "/:pathMatch(.*)*",
+            redirect: "/",
+        },
     ],
 });
 

@@ -161,7 +161,6 @@ const filterRepo = computed(() => {
 
 <style scoped>
 .el-container {
-  /* height: 100vh; */
   display: flex;
   flex-direction: column;
 }
@@ -170,6 +169,7 @@ const filterRepo = computed(() => {
 }
 .el-main {
   width: 100%;
+  min-height: 100vh;
   display: flex;
   justify-content: center;
   margin: auto;
@@ -178,7 +178,6 @@ const filterRepo = computed(() => {
     sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
   font-weight: 500;
   line-height: 1.2;
-  /* overflow: hidden; */
 }
 .user {
   height: 100vh;
@@ -288,5 +287,20 @@ const filterRepo = computed(() => {
   color: #8b949e;
   font-size: 36px;
   text-align: center;
+}
+@media screen and (max-width: 768px) {
+  .el-main {
+    flex-direction: column;
+  }
+  .user {
+    height: 500px;
+    align-items: center;
+    justify-content: center;
+    margin: 10px 0;
+  }
+  .repos {
+    width: 100%;
+    margin: 10px 0;
+  }
 }
 </style>

@@ -119,8 +119,10 @@ window.addEventListener("scroll", scrollEvent);
 }
 .el-header {
   padding: 0;
+  height: auto;
 }
 .el-main {
+  min-height: 100vh;
   width: 100%;
   display: flex;
   justify-content: center;
@@ -240,5 +242,20 @@ window.addEventListener("scroll", scrollEvent);
   color: #8b949e;
   font-size: 36px;
   text-align: center;
+}
+@media screen and (max-width: 768px) {
+  .el-main {
+    flex-direction: column;
+  }
+  .user {
+    height: 500px;
+    align-items: center;
+    justify-content: center;
+    margin: 10px 0;
+  }
+  .repos {
+    width: 100%;
+    margin: 10px 0;
+  }
 }
 </style>
