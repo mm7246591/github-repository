@@ -11,7 +11,6 @@ const user = useUserStore();
 onMounted(async () => {
   await user.getRepos();
 });
-console.log(search.users);
 </script>
 
 <template>

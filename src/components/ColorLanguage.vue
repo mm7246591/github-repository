@@ -9,7 +9,7 @@ onMounted(async () => {
   await getcolorLanguage();
 });
 const getcolorLanguage = async () => {
-  await axios.get("/colors.json").then((res) => {
+  await axios.get("/public/static/colors.json").then((res) => {
     colors.value = Object.entries(res.data).filter(
       (color) => color[0] === props.language
     );
