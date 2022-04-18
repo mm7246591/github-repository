@@ -113,7 +113,6 @@ window.addEventListener("scroll", scrollEvent);
 </template>
 <style scoped>
 .el-container {
-  /* height: 100vh; */
   display: flex;
   flex-direction: column;
 }
