@@ -1,10 +1,12 @@
 <script setup>
 import axios from "axios";
+import { useUserStore } from "../stores/user";
 import { onMounted, reactive, ref } from "@vue/runtime-core";
 import { DoughnutChart, LineChart } from "vue-chart-3";
 import { Chart, registerables } from "chart.js";
+import db from "../firebase/firebase";
+import { ref as dref, onValue } from "firebase/database";
 import Header from "../components/Header.vue";
-import { useUserStore } from "../stores/user";
 Chart.register(...registerables);
 const props = defineProps({
   username: String,
@@ -65,12 +67,13 @@ const getLanguages = async () => {
   });
 };
 const getcolorLanguage = async () => {
-  await axios.get("/static/colors.json").then((res) => {
+  const getData = dref(db);
+  onValue(getData, (data) => {
     for (let i of languageData.labels) {
       languageData.datasets[0].backgroundColor.push(
-        Object.entries(res.data)
+        `#${Object.entries(data.val())
           .filter((color) => color[0] === i)
-          .map((color) => color[1])
+          .map((color) => color[1])}`
       );
     }
   });

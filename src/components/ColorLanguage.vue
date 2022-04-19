@@ -1,6 +1,7 @@
 <script setup>
-import axios from "axios";
 import { onMounted, ref } from "vue";
+import db from "../firebase/firebase";
+import { ref as dref, onValue } from "firebase/database";
 const props = defineProps({
   language: String,
 });
@@ -9,19 +10,20 @@ onMounted(async () => {
   await getcolorLanguage();
 });
 const getcolorLanguage = async () => {
-  await axios.get("/public/static/colors.json").then((res) => {
-    colors.value = Object.entries(res.data).filter(
+  const getData = dref(db);
+  await onValue(getData, (data) => {
+    colors.value = Object.entries(data.val()).filter(
       (color) => color[0] === props.language
     );
   });
 };
 </script>
 <template>
-  <span v-for="color of colors" :key="color[1]">
+  <span v-for="color of colors" :key="color[0]">
     <span
       class="colorLanguage"
       :style="{
-        backgroundColor: `${color[1]}`,
+        backgroundColor: `#${color[1]}`,
       }"
     ></span>
     <span class="text">{{ language }}</span>
