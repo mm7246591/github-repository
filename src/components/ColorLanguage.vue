@@ -1,7 +1,6 @@
 <script setup>
 import { onMounted, ref } from "vue";
-import db from "../firebase/firebase";
-import { ref as dref, onValue } from "firebase/database";
+import colorData from "../assets/colors.json";
 const props = defineProps({
   language: String,
 });
@@ -10,12 +9,9 @@ onMounted(async () => {
   await getcolorLanguage();
 });
 const getcolorLanguage = async () => {
-  const getData = dref(db);
-  await onValue(getData, (data) => {
-    colors.value = Object.entries(data.val()).filter(
-      (color) => color[0] === props.language
-    );
-  });
+  colors.value = Object.entries(colorData).filter(
+    (color) => color[0] === props.language
+  );
 };
 </script>
 <template>

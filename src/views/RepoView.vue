@@ -4,8 +4,7 @@ import { useUserStore } from "../stores/user";
 import { onMounted, reactive, ref } from "@vue/runtime-core";
 import { DoughnutChart, LineChart } from "vue-chart-3";
 import { Chart, registerables } from "chart.js";
-import db from "../firebase/firebase";
-import { ref as dref, onValue } from "firebase/database";
+import colorData from "../assets/colors.json";
 import Header from "../components/Header.vue";
 Chart.register(...registerables);
 const props = defineProps({
@@ -67,16 +66,13 @@ const getLanguages = async () => {
   });
 };
 const getcolorLanguage = async () => {
-  const getData = dref(db);
-  onValue(getData, (data) => {
-    for (let i of languageData.labels) {
-      languageData.datasets[0].backgroundColor.push(
-        `#${Object.entries(data.val())
-          .filter((color) => color[0] === i)
-          .map((color) => color[1])}`
-      );
-    }
-  });
+  for (let i of languageData.labels) {
+    languageData.datasets[0].backgroundColor.push(
+      `#${Object.entries(colorData)
+        .filter((color) => color[0] === i)
+        .map((color) => color[1])}`
+    );
+  }
 };
 const languageData = reactive({
   labels: [],
