@@ -14,9 +14,7 @@ onMounted(async () => {
 const searchEvent = () => {
   if (search.userSearch) {
     axios("https://api.github.com/users/" + search.userSearch).then((res) => {
-      if (res.data) {
-        search.users.push(res.data);
-      }
+      search.users.push(res.data);
     });
   } else {
     search.users = [];
@@ -57,7 +55,7 @@ const sideBarEvent = () => {
       ></RouterLink>
       <el-input
         v-model.trim="search.userSearch"
-        @input="searchEvent"
+        @change="searchEvent"
         placeholder="Searching"
         :prefix-icon="Search"
         size="large"
